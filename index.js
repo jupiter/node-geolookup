@@ -11,6 +11,7 @@ var path = require('path');
  */
 exports.citiesPath = path.join(__dirname, './data/cities15000.txt');
 exports.admin1Path = path.join(__dirname, './data/admin1CodesASCII.txt');
+exports.admin2Path = path.join(__dirname, './data/admin2Codes.txt');
 
 /**
  * Look up the nearest city
@@ -28,10 +29,13 @@ exports.nearestCity = function(latitude, longitude, calculateDistance){
 /**
  * Look up biggest (by population) city for country/area
  */
-exports.biggestCity = function(country, areaCode) {
+exports.biggestCity = function(country, adminCode, admin2Code) {
   citiesTree(); // Ensure database is populated
 
-  return exports.biggestCitiesByKey[country + '.' + areaCode];
+  var key = country + '.' + adminCode;
+  if (admin2Code) key += '.' + admin2Code;
+
+  return exports.biggestCitiesByKey[key];
 };
 
 /**
@@ -51,18 +55,22 @@ function citiesTree() {
     var xyz = _xyz(latitude, longitude);
 
     var adminKey = columns[8] + '.' + columns[10];
+    var admin2Key = adminKey + '.' + columns[11];
 
     var cityData = {
       name: columns[2],
       country: columns[8],
       adminCode: columns[10],
       adminName: adminNames()[adminKey], // Local administration
+      admin2Code: columns[11],
+      admin2Name: adminNames()[admin2Key],
       latitude: latitude,
       longitude: longitude,
       population: parseInt(columns[14])
     };
 
     updateBiggestCity(adminKey, cityData);
+    updateBiggestCity(admin2Key, cityData);
 
     return {
       x: xyz.x,
@@ -96,6 +104,15 @@ function adminNames() {
   adminCodes.forEach(function(line){
     var columns = line.split('\t');
 
+    adminNames[columns[0]] = columns[1];
+  });
+
+  if (!exports.admin2Path) return exports.adminNames;
+
+  var admin2Codes = fs.readFileSync(exports.admin2Path).toString().split('\n');
+
+  admin2Codes.forEach(function(line){
+    var columns = line.split('\t');
     adminNames[columns[0]] = columns[1];
   });
 
