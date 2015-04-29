@@ -39,6 +39,15 @@ exports.biggestCity = function(country, adminCode, admin2Code) {
 };
 
 /**
+ * Look up distance between two cities
+ */
+exports.citiesDistance = function(cityA, cityB) {
+  var xyzA = _xyz(cityA.latitude, cityA.longitude);
+  var xyzB = _xyz(cityB.latitude, cityB.longitude);
+  return _distance(xyzA, xyzB);
+};
+
+/**
  * Load geographical tree with cities
  */
 function citiesTree() {
