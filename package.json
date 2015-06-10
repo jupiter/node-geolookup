@@ -1,6 +1,6 @@
 {
   "name": "geolookup",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A module for looking up nearby places using the Geonames.org database",
   "main": "index.js",
   "scripts": {
