@@ -12,6 +12,7 @@ var path = require('path');
 exports.citiesPath = path.join(__dirname, './data/cities15000.txt');
 exports.admin1Path = path.join(__dirname, './data/admin1CodesASCII.txt');
 exports.admin2Path = path.join(__dirname, './data/admin2Codes.txt');
+exports.countriesPath = path.join(__dirname, './data/countries.txt');
 
 /**
  * Look up the nearest city
@@ -65,10 +66,13 @@ function citiesTree() {
 
     var adminKey = columns[8] + '.' + columns[10];
     var admin2Key = adminKey + '.' + columns[11];
+    var countryIsoCode = columns[8];
 
     var cityData = {
-      name: columns[2],
+      id: columns[0],
+      name: columns[1],
       country: columns[8],
+      countryName: countryNames()[countryIsoCode],
       adminCode: columns[10],
       adminName: adminNames()[adminKey], // Local administration
       admin2Code: columns[11],
@@ -126,6 +130,24 @@ function adminNames() {
   });
 
   return exports.adminNames;
+}
+
+/**
+ * Load country names
+ */
+function countryNames() {
+  if (exports.countryNames) return exports.countryNames;
+
+  var countryCodes = fs.readFileSync(exports.countriesPath).toString().split('\n');
+
+  var countryNames = exports.countryNames = {};
+  countryCodes.forEach(function(line){
+    var columns = line.split('\t');
+
+    countryNames[columns[0]] = columns[1];
+  });
+
+  return exports.countryNames;
 }
 
 /**
