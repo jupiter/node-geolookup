@@ -54,7 +54,7 @@ exports.citiesDistance = function(cityA, cityB) {
 function citiesTree() {
   if (exports.citiesTree) return exports.citiesTree;
 
-  var cities = fs.readFileSync(exports.citiesPath).toString().split('\n');
+  var cities = fs.readFileSync(exports.citiesPath).toString().trim().split('\n');
 
   var points = cities.map(function(line, i){
     var columns = line.split('\t');
